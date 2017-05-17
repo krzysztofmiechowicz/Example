@@ -1,0 +1,68 @@
+
+@using Newtonsoft.Json
+@model  List<MOK.Models.OfferDomainModel>
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var offerItemsJson = JsonConvert.SerializeObject(Model);
+}
+@Scripts.Render("~/bundles/order")
+<script type="text/ng-template" id="popover.html">
+    <div>
+        Popover content
+    </div>
+</script>
+<div ng-app="orderApp">
+    <div ng-controller="OrdersCtrl"
+         data-offer-items="@offerItemsJson">
+        <form name="orderForm" >
+        <h2>Dodaj zamówienie</h2>
+
+            <div class="row ">
+                <div class="col-md-4">
+                    Rodzaj mięska
+                </div>
+                <div class="col-md-2">
+                    Zamawiam
+                </div>
+                <div class="col-md-1">
+                    Ilość
+                </div>
+                <div class="col-md-1">
+                    Komentarz
+                </div>
+            </div>
+            <div class="row"></div>
+            <div ng-repeat="item in order" class="row">
+                <div class="col-md-4">
+                    {{item.Name}}
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" ng-model="item.order"/>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <div class="validation-container"
+                             popover-class="validation-popover"
+                             popover-placement="top-left"
+                             popover-trigger="none"
+                             popover-is-open="orderForm.quantity{{$index}}.$invalid"
+                             uib-popover="popover"
+                             ng-class="{ visible: orderForm.quantity{{$index}}.$invalid}">
+                            <input name="quantity{{$index}}" type="number" step="0.5" min="0" style="width: 3em"
+                                   ng-show="item.order"
+                                   ng-model="item.quantity"
+                                   min-quantity
+                                   minimum="4"
+                                   ng-change="resetValidation(orderForm.quantity{{$index}})"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <input type="text" ng-show="item.order" ng-model="item.comment"/>
+                </div>
+            </div>
+         <div><button class="btn btn-primary" ng-disabled="!orderForm.$valid" ng-click="saveOrder(order)">Zapisz</button></div>        
+        </form>
+    </div>
+</div>
